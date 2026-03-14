@@ -1,0 +1,10 @@
+@apiTest_HostAddress=http://localhost:5254
+
+// Pruebas para el endpoint de acortar URL
+### Prueba 1: Acortar una URL válida
+POST {{apiTest_HostAddress}}/shorten-url
+Content-Type: application/json
+
+{
+  "url": "https://www.example.com"
+}
