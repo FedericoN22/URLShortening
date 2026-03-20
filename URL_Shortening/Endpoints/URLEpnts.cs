@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using URL_Shortening.DTOs;
-using URL_Shortening.Entidades;
 using URL_Shortening.Services;
-using URL_ShorteningDB; // ← el namespace donde está tu ApplicationDbContext
+using URL_ShorteningDB;
 namespace URL_Shortening.Endpoints;
 
 public static class URLEpnts
@@ -11,19 +10,13 @@ public static class URLEpnts
     {
         app.MapPost("/shorten-url", async (UrlDto urlDto, ApplicationDbContext dbContext) =>
         {
-            var shortCode = new ShortCode();
+            var urlService = new UrlService(dbContext);
+            var (success, error, entity) = await urlService.ValidateAndCreateAsync(urlDto.Url);
 
-            var shortUrlEntity = new UrlsEntidades
-            {
-                UrlOriginal = urlDto.Url,
-                UrlCorta = shortCode.GenerateShortCode(urlDto.Url),
-                createAt = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
-            };
+            if (!success)
+                return Results.BadRequest(new { error });
 
-            dbContext.Add(shortUrlEntity);
-            await dbContext.SaveChangesAsync();
-
-            return Results.Ok(shortUrlEntity);
+            return Results.Ok(entity);
         });
 
         app.MapGet("/urls", async (ApplicationDbContext dbContext) =>

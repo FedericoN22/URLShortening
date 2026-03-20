@@ -1,17 +1,27 @@
-using System.Security.Cryptography;
 namespace URL_Shortening.Services;
 
-public class ShortCode
+public static class ShortCode
 {
-    public string GenerateShortCode(string url)
-    {
-        using var sha256 = SHA256.Create();
-        var hash = sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(url));
-        var shortCode = Convert.ToBase64String(hash)
-        .Replace("/", "_")
-        .Replace("+", "-")
-        .Substring(0, 6);
+    private const string Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-        return shortCode;
+    public static string GenerateShortCode(int id)
+    {
+        return EncodeToBase62(id);
+    }
+
+    private static string EncodeToBase62(int number)
+    {
+        if (number == 0) return "0";
+
+        var result = new char[11];
+        var index = result.Length;
+
+        while (number > 0)
+        {
+            result[--index] = Chars[(int)(number % 62)];
+            number /= 62;
+        }
+
+        return new string(result, index, result.Length - index);
     }
 }
