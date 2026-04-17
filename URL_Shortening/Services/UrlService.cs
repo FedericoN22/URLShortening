@@ -78,4 +78,37 @@ public class UrlService
 
         return (true, null, entity);
     }
+
+    public async Task<(bool Success, string? Error)> DeleteByShortCodeAsync(string shortCode)
+    {
+        var entity = await _db.UrlMappings.FirstOrDefaultAsync(u => u.UrlCorta == shortCode);
+        if (entity == null)
+            return (false, "URL not found");
+
+        _db.UrlMappings.Remove(entity);
+        await _db.SaveChangesAsync();
+
+        return (true, null);
+    }
+
+    public async Task<(bool Success, string? Error, UrlsEntidades? Entity)> UpdateByShortCodeAsync(string shortCode, string newUrl)
+    {
+        if (string.IsNullOrWhiteSpace(newUrl))
+            return (false, "URL cannot be empty", null);
+
+        if (!Uri.TryCreate(newUrl, UriKind.Absolute, out var uri) ||
+            (uri.Scheme != "http" && uri.Scheme != "https"))
+            return (false, "Invalid URL format", null);
+
+        var entity = await _db.UrlMappings.FirstOrDefaultAsync(u => u.UrlCorta == shortCode);
+        if (entity == null)
+            return (false, "URL not found", null);
+
+        entity.UrlOriginal = uri.GetLeftPart(UriPartial.Path).ToLower();
+        entity.updateAt = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        await _db.SaveChangesAsync();
+
+        return (true, null, entity);
+    }
 }

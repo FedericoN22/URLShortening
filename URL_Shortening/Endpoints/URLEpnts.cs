@@ -16,19 +16,30 @@ public static class URLEpnts
             if (!success)
                 return Results.BadRequest(new { error });
 
-            return Results.Ok(entity);
+            var response = new SalidaDto(
+                ShortUrl: entity!.UrlCorta ?? "",
+                OriginalUrl: entity.UrlOriginal,
+                Clicks: entity.Clicks
+            );
+
+            return Results.Ok(response);
         });
 
         app.MapGet("/urls", async (ApplicationDbContext dbContext) =>
         {
             var urls = await dbContext.UrlMappings.OrderByDescending(u => u.Id).ToListAsync();
-            return Results.Ok(urls);
+            var response = urls.Select(u => new SalidaDto(
+                ShortUrl: u.UrlCorta ?? "",
+                OriginalUrl: u.UrlOriginal,
+                Clicks: u.Clicks
+            ));
+            return Results.Ok(response);
         });
 
-        app.MapDelete("/urls/{id}", async (int id, ApplicationDbContext dbContext) =>
+        app.MapDelete("/urls/{shortCode}", async (string shortCode, ApplicationDbContext dbContext) =>
         {
             var urlService = new UrlService(dbContext);
-            var (success, error) = await urlService.DeleteAsync(id);
+            var (success, error) = await urlService.DeleteByShortCodeAsync(shortCode);
 
             if (!success)
                 return Results.NotFound(new { error });
@@ -36,15 +47,37 @@ public static class URLEpnts
             return Results.Ok(new { message = "URL deleted successfully" });
         });
 
-        app.MapPut("/urls/{id}", async (int id, UrlDto urlDto, ApplicationDbContext dbContext) =>
+        app.MapPut("/urls/{shortCode}", async (string shortCode, UrlDto urlDto, ApplicationDbContext dbContext) =>
         {
             var urlService = new UrlService(dbContext);
-            var (success, error, entity) = await urlService.UpdateAsync(id, urlDto.Url);
+            var (success, error, entity) = await urlService.UpdateByShortCodeAsync(shortCode, urlDto.Url);
 
             if (!success)
                 return Results.BadRequest(new { error });
 
             return Results.Ok(entity);
+        });
+
+        app.MapGet("/r/{shortCode}", async (string shortCode, ApplicationDbContext dbContext) =>
+        {
+            var clickService = new ClickService(dbContext);
+            var (success, error, data) = await clickService.IncrementAndGetAsync(shortCode);
+
+            if (!success)
+                return Results.NotFound(new { error });
+
+            return Results.Redirect(data!.OriginalUrl, permanent: false);
+        });
+
+        app.MapGet("/stats/{shortCode}", async (string shortCode, ApplicationDbContext dbContext) =>
+        {
+            var clickService = new ClickService(dbContext);
+            var data = await clickService.GetStatsAsync(shortCode);
+
+            if (data == null)
+                return Results.NotFound(new { error = "URL not found" });
+
+            return Results.Ok(data);
         });
     }
 }
