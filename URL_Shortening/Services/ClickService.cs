@@ -22,7 +22,7 @@ public class ClickService
             return (false, "URL not found", null);
 
         entity.Clicks++;
-        entity.updateAt = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        entity.updateAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
         await _db.Entry(entity).ReloadAsync();
