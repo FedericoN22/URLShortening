@@ -213,9 +213,12 @@ function App() {
                     </div>
                     <div className="url-info">
                       <span className="url-label">Short</span>
-                      <a href={`/r/${item.shortUrl}`} target="_blank" rel="noopener noreferrer" className="short-code">
+                      <button 
+                        onClick={() => window.open(`/r/${item.shortUrl}`, '_blank')}
+                        className="short-code-btn"
+                      >
                         {item.shortUrl}
-                      </a>
+                      </button>
                     </div>
                     <div className="url-info">
                       <span className="url-label">Clicks</span>

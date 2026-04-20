@@ -229,6 +229,21 @@ body {
   text-decoration: underline;
 }
 
+.short-code-btn {
+  color: var(--primary) !important;
+  font-weight: 600;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.short-code-btn:hover {
+  color: #a855f7 !important;
+}
+
 .click-count {
   color: var(--success);
   font-weight: 600;

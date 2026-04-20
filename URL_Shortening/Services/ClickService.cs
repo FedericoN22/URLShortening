@@ -21,14 +21,17 @@ public class ClickService
         if (entity == null)
             return (false, "URL not found", null);
 
-        entity.Clicks++;
-        entity.updateAt = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        await _db.SaveChangesAsync();
+        var newClicks = entity.Clicks + 1;
+        var now = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        
+        await _db.Database.ExecuteSqlRawAsync(
+            "UPDATE UrlMappings SET Clicks = {0}, updateAt = {1} WHERE Id = {2}",
+            newClicks, now, entity.Id);
 
         var salida = new SalidaDto(
             ShortUrl: entity.UrlCorta!,
             OriginalUrl: entity.UrlOriginal,
-            Clicks: entity.Clicks
+            Clicks: newClicks
         );
 
         return (true, null, salida);

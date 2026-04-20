@@ -79,5 +79,13 @@ public static class URLEpnts
 
             return Results.Ok(data);
         });
+
+        app.MapPost("/debug/increment/{shortCode}", async (string shortCode, ApplicationDbContext dbContext) =>
+        {
+            var clickService = new ClickService(dbContext);
+            var (success, error, data) = await clickService.IncrementAndGetAsync(shortCode);
+
+            return Results.Ok(new { success, error, data });
+        });
     }
 }
