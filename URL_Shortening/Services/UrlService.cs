@@ -33,7 +33,7 @@ public class UrlService
         var entity = new UrlsEntidades
         {
             UrlOriginal = normalized,
-            createAt = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            createAt = DateTime.UtcNow,
         };
 
         _db.Add(entity);
@@ -72,7 +72,7 @@ public class UrlService
             return (false, "URL not found", null);
 
         entity.UrlOriginal = uri.GetLeftPart(UriPartial.Path).ToLower();
-        entity.updateAt = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        entity.updateAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
 

@@ -22,7 +22,7 @@ namespace URL_Shortening.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Clicks")
+b.Property<int>("Clicks")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("UrlCorta")
@@ -32,11 +32,21 @@ namespace URL_Shortening.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("createAt")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTime>("createAt")
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("updateAt")
-                        .HasColumnType("INTEGER");
+                    b.Property<DateTime>("updateAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UrlOriginal")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("createAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("updateAt")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
