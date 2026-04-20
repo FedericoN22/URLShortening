@@ -7,8 +7,8 @@ namespace URL_Shortening.Entidades
         public string? UrlCorta { get; set; }
         public int Clicks { get; set; } = 0;
 
-        public int createAt { get; set; }
+        public DateTime createAt { get; set; }
 
-        public int updateAt { get; set; }
+        public DateTime updateAt { get; set; }
     }
 }

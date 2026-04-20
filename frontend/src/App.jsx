@@ -82,8 +82,8 @@ function App() {
   };
 
   const handleEdit = (item) => {
-    setEditingId(item.id);
-    setEditUrl(item.urlOriginal);
+    setEditingId(item.shortUrl);
+    setEditUrl(item.originalUrl);
   };
 
   const handleUpdate = async (id) => {
@@ -183,8 +183,8 @@ function App() {
         ) : (
           <div className="urls-list">
             {urls.map((item) => (
-              <div key={item.id} className="url-card">
-                {editingId === item.id ? (
+              <div key={item.shortUrl} className="url-card">
+                {editingId === item.shortUrl ? (
                   <div className="edit-form">
                     <input
                       type="text"
@@ -193,7 +193,7 @@ function App() {
                       className="url-input edit-input"
                     />
                     <div className="edit-actions">
-                      <button onClick={() => handleUpdate(item.id)} className="btn-save">
+                      <button onClick={() => handleUpdate(item.shortUrl)} className="btn-save">
                         Save
                       </button>
                       <button onClick={handleCancelEdit} className="btn-cancel">
@@ -205,21 +205,30 @@ function App() {
                   <>
                     <div className="url-info">
                       <span className="url-label">Original</span>
-                      <a href={item.urlOriginal} target="_blank" rel="noopener noreferrer" className="url-link">
-                        {item.urlOriginal.length > 50 
-                          ? item.urlOriginal.substring(0, 50) + "..." 
-                          : item.urlOriginal}
+                      <a href={item.originalUrl} target="_blank" rel="noopener noreferrer" className="url-link">
+                        {item.originalUrl && item.originalUrl.length > 50 
+                          ? item.originalUrl.substring(0, 50) + "..." 
+                          : item.originalUrl}
                       </a>
                     </div>
                     <div className="url-info">
                       <span className="url-label">Short</span>
-                      <span className="short-code">{item.urlCorta}</span>
+                      <button 
+                        onClick={() => window.open(`/r/${item.shortUrl}`, '_blank')}
+                        className="short-code-btn"
+                      >
+                        {item.shortUrl}
+                      </button>
+                    </div>
+                    <div className="url-info">
+                      <span className="url-label">Clicks</span>
+                      <span className="click-count">{item.clicks}</span>
                     </div>
                     <div className="url-actions">
                       <button onClick={() => handleEdit(item)} className="btn-edit">
                         Edit
                       </button>
-                      <button onClick={() => handleDelete(item.id)} className="btn-delete">
+                      <button onClick={() => handleDelete(item.shortUrl)} className="btn-delete">
                         Delete
                       </button>
                     </div>

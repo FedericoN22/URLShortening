@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using URL_ShorteningDB;
 using URL_Shortening.Endpoints;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
@@ -12,6 +12,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddCors();
 
+builder.Services.ConfigureHttpJsonOptions(options =>
+{
+    options.SerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+});
 
 var app = builder.Build();
 

@@ -33,7 +33,7 @@ public class UrlService
         var entity = new UrlsEntidades
         {
             UrlOriginal = normalized,
-            createAt = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds(),
+            createAt = DateTime.UtcNow,
         };
 
         _db.Add(entity);
@@ -46,9 +46,9 @@ public class UrlService
         return (true, null, entity);
     }
 
-    public async Task<(bool Success, string? Error)> DeleteAsync(int id)
+    public async Task<(bool Success, string? Error)> DeleteByShortCodeAsync(string shortCode)
     {
-        var entity = await _db.UrlMappings.FindAsync(id);
+        var entity = await _db.UrlMappings.FirstOrDefaultAsync(u => u.UrlCorta == shortCode);
         if (entity == null)
             return (false, "URL not found");
 
@@ -58,7 +58,7 @@ public class UrlService
         return (true, null);
     }
 
-    public async Task<(bool Success, string? Error, UrlsEntidades? Entity)> UpdateAsync(int id, string newUrl)
+    public async Task<(bool Success, string? Error, UrlsEntidades? Entity)> UpdateByShortCodeAsync(string shortCode, string newUrl)
     {
         if (string.IsNullOrWhiteSpace(newUrl))
             return (false, "URL cannot be empty", null);
@@ -67,12 +67,12 @@ public class UrlService
             (uri.Scheme != "http" && uri.Scheme != "https"))
             return (false, "Invalid URL format", null);
 
-        var entity = await _db.UrlMappings.FindAsync(id);
+        var entity = await _db.UrlMappings.FirstOrDefaultAsync(u => u.UrlCorta == shortCode);
         if (entity == null)
             return (false, "URL not found", null);
 
         entity.UrlOriginal = uri.GetLeftPart(UriPartial.Path).ToLower();
-        entity.updateAt = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        entity.updateAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
 

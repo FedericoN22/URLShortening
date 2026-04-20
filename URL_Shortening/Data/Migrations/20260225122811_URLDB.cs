@@ -19,8 +19,8 @@ namespace URL_Shortening.Migrations
                     UrlOriginal = table.Column<string>(type: "TEXT", nullable: false),
                     UrlCorta = table.Column<string>(type: "TEXT", nullable: true),
                     Clicks = table.Column<int>(type: "INTEGER", nullable: false),
-                    createAt = table.Column<int>(type: "INTEGER", nullable: false),
-                    updateAt = table.Column<int>(type: "INTEGER", nullable: false)
+                    createAt = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    updateAt = table.Column<DateTime>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

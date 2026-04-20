@@ -220,6 +220,37 @@ body {
   color: var(--primary);
   font-weight: 600;
   font-family: "JetBrains Mono", "Fira Code", monospace;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.short-code:hover {
+  color: #a855f7;
+  text-decoration: underline;
+}
+
+.short-code-btn {
+  color: var(--primary) !important;
+  font-weight: 600;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.short-code-btn:hover {
+  color: #a855f7 !important;
+}
+
+.click-count {
+  color: var(--success);
+  font-weight: 600;
+  background: rgba(34, 197, 94, 0.15);
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.875rem;
 }
 
 .url-actions {
