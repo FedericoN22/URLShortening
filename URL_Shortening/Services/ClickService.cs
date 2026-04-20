@@ -17,30 +17,28 @@ public class ClickService
     public async Task<(bool Success, string? Error, SalidaDto? Data)> IncrementAndGetAsync(string shortCode)
     {
         var entity = await _db.UrlMappings.FirstOrDefaultAsync(u => u.UrlCorta == shortCode);
-        
+
         if (entity == null)
             return (false, "URL not found", null);
 
-        var newClicks = entity.Clicks + 1;
-        var now = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
-        
-        await _db.Database.ExecuteSqlRawAsync(
-            "UPDATE UrlMappings SET Clicks = {0}, updateAt = {1} WHERE Id = {2}",
-            newClicks, now, entity.Id);
+        entity.Clicks++;
+        entity.updateAt = (int)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        await _db.SaveChangesAsync();
+        await _db.Entry(entity).ReloadAsync();
 
         var salida = new SalidaDto(
             ShortUrl: entity.UrlCorta!,
             OriginalUrl: entity.UrlOriginal,
-            Clicks: newClicks
+            Clicks: entity.Clicks
         );
 
         return (true, null, salida);
     }
-
     public async Task<SalidaDto?> GetStatsAsync(string shortCode)
     {
         var entity = await _db.UrlMappings.FirstOrDefaultAsync(u => u.UrlCorta == shortCode);
-        
+
         if (entity == null)
             return null;
 
